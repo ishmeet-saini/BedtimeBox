@@ -1,0 +1,56 @@
+# ── SHUTDOWN LISTENER (shutdown_listener.py) ──
+# Run with: sudo python3 shutdown_listener.py
+
+import serial
+import time
+import os
+
+SERIAL_PORT = '/dev/ttyACM0'
+BAUD_RATE = 115200
+
+try:
+    print('Opening serial port...')
+    ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    time.sleep(2)
+    ser.reset_input_buffer()
+    print('Listening for SHUTDOWN command...')
+except serial.SerialException as e:
+    print(f'Error opening serial port: {e}')
+    exit(1)
+
+try:
+    while True:
+        line = ser.readline().decode('utf-8', errors='ignore').strip()
+        if line:
+            print('Received:', line)
+            if 'SHUTDOWN' in line:
+                print('Shutdown command detected. Shutting down now...')
+                os.system('sudo shutdown now')
+                break
+except KeyboardInterrupt:
+    print('Interrupted by user.')
+finally:
+    ser.close()
+    print('Serial port closed.')
+
+
+# ── BOOT SERVICE (arduino-shutdown.service) ──
+# Place this file at: /etc/systemd/system/arduino-shutdown.service
+# Then run:
+#   sudo systemctl enable arduino-shutdown
+#   sudo systemctl start arduino-shutdown
+
+"""
+[Unit]
+Description=Arduino Shutdown Listener
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/shutdown_listener.py
+User=pi
+WorkingDirectory=/home/pi
+
+[Install]
+WantedBy=multi-user.target
+"""
