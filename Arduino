@@ -1,0 +1,402 @@
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);   
+
+int aONE=0;
+int bONE=1;
+int cONE=2;
+int dONE=3;
+int eONE=4;
+int fONE=5;
+int gONE=6; 
+
+int aTEN=7;
+int bTEN=8;
+int cTEN=9;
+int dTEN=10;
+int eTEN=11;
+int fTEN=12;
+int gTEN=13;
+
+int ones=0;
+int tens=0;
+
+int LED=A0;
+int piezo=A1;
+int button=A2;
+
+bool isButtonPressed() {
+  if (digitalRead(A2) == LOW) {
+    delay(50);  
+    if (digitalRead(A2) == LOW) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void lcd_setup() {
+  lcd.init();
+  lcd.setCursor(0, 0);
+  lcd.backlight();
+  lcd.display();
+  lcd.setCursor(7, 1);
+  lcd.print("Timer");
+  lcd.setCursor(5, 2);
+  lcd.print("Running");
+  }
+
+void components_defined() {
+  for(int i=0; i<=13; i++) {
+  	pinMode(i, OUTPUT); 
+  }
+  pinMode(A0, OUTPUT);
+  pinMode(A1, OUTPUT);
+  pinMode(A2, INPUT_PULLUP);
+  pinMode(A3, OUTPUT);
+	}
+
+void seven_segment_counting() {
+  for (tens=0; tens<=9; tens++) {
+    for (ones=-1; ones<=9; ones++) {
+      for (int x=12; x<=14; x++) {
+        lcd.setCursor(x, 2);
+        lcd.print(".");
+        delay(100);
+        lcd.setCursor(12, 2);
+        lcd.print("   ");
+        if (isButtonPressed()) {
+          ones=0;
+          tens=0;
+          lcd.clear();
+          lcd.setCursor(7, 1);
+          lcd.print("Timer");
+          lcd.setCursor(5, 2);
+          lcd.print("Running");
+          for (int x=12; x<=14; x++) {
+            lcd.setCursor(x, 2);
+            lcd.print(".");
+            delay(100);
+            lcd.setCursor(12, 2);
+            lcd.print("   ");
+          	return;
+      }
+        }
+      }
+      
+      if (tens == 2 && ones == 1) {    
+        Serial.println("SHUTDOWN");
+        lcd.clear();
+        lcd.setCursor(7, 1);
+        lcd.print("TIMES");
+        lcd.setCursor(8, 2);
+        lcd.print("UP!");
+        delay(10);
+
+      while (true) {
+        digitalWrite(aTEN, 0);
+        digitalWrite(bTEN, 0);
+        digitalWrite(cTEN, 0);
+        digitalWrite(dTEN, 0);
+        digitalWrite(eTEN, 0);
+        digitalWrite(fTEN, 0);
+        digitalWrite(gTEN, 0);
+        digitalWrite(aONE, 0);
+        digitalWrite(bONE, 0);
+        digitalWrite(cONE, 0);
+        digitalWrite(dONE, 0);
+        digitalWrite(eONE, 0);
+        digitalWrite(fONE, 0);
+        digitalWrite(gONE, 0);
+        delay(500); 
+
+        tone(A1, 500);              
+        digitalWrite(aTEN, 1);       // Manually change here
+        digitalWrite(bTEN, 1);
+        digitalWrite(cTEN, 0);
+        digitalWrite(dTEN, 1);
+        digitalWrite(eTEN, 1);
+        digitalWrite(fTEN, 0);
+        digitalWrite(gTEN, 1);
+
+        digitalWrite(aONE, 1);       // Manually change here 
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 1);
+        digitalWrite(eONE, 1);
+        digitalWrite(fONE, 1);
+        digitalWrite(gONE, 0);
+        delay(500);
+        noTone(A1);
+        if (isButtonPressed()) {
+          ones==0;
+          tens==0;
+          lcd.clear();
+          return;
+      }
+    }
+  }
+      
+//seven segment hardcode
+     if (ones==0) {
+        digitalWrite(aONE, 1);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 1);
+        digitalWrite(eONE, 1);
+        digitalWrite(fONE, 1);
+        digitalWrite(gONE, 0);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      }
+      
+      if (ones==1) {
+        digitalWrite(aONE, 0);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 0);
+        digitalWrite(eONE, 0);
+        digitalWrite(fONE, 0);
+        digitalWrite(gONE, 0);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      }
+
+      if (ones==2) {
+        digitalWrite(aONE, 1);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 0);
+        digitalWrite(dONE, 1);
+        digitalWrite(eONE, 1);
+        digitalWrite(fONE, 0);
+        digitalWrite(gONE, 1);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      
+      }
+
+      if (ones==3) {
+        digitalWrite(aONE, 1);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 1);
+        digitalWrite(eONE, 0);
+        digitalWrite(fONE, 0);
+        digitalWrite(gONE, 1);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);  
+      }
+
+      if (ones==4) {
+        digitalWrite(aONE, 0);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 0);
+        digitalWrite(eONE, 0);
+        digitalWrite(fONE, 1);
+        digitalWrite(gONE, 1);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500); 
+      }
+
+      if (ones==5) {
+        digitalWrite(aONE, 1);
+        digitalWrite(bONE, 0);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 1);
+        digitalWrite(eONE, 0);
+        digitalWrite(fONE, 1);
+        digitalWrite(gONE, 1);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      }
+
+      if (ones==6) {
+        digitalWrite(aONE, 0);
+        digitalWrite(bONE, 0);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 1);
+        digitalWrite(eONE, 1);
+        digitalWrite(fONE, 1);
+        digitalWrite(gONE, 1);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      }
+
+      if (ones==7) {
+        digitalWrite(aONE, 1);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 0);
+        digitalWrite(eONE, 0);
+        digitalWrite(fONE, 0);
+        digitalWrite(gONE, 0);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      }
+
+      if (ones==8) {
+        digitalWrite(aONE, 1);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 1);
+        digitalWrite(eONE, 1);
+        digitalWrite(fONE, 1);
+        digitalWrite(gONE, 1);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      }
+
+      if (ones==9) {
+        digitalWrite(aONE, 1);
+        digitalWrite(bONE, 1);
+        digitalWrite(cONE, 1);
+        digitalWrite(dONE, 0);
+        digitalWrite(eONE, 0);
+        digitalWrite(fONE, 1);
+        digitalWrite(gONE, 1);
+        digitalWrite(A0, 1);
+    	delay(500);
+    	digitalWrite(A0, 0);
+        delay(500);
+      }
+      
+    if (ones==10) {
+      ones=0;
+    }
+      
+    if (tens==0) {
+      digitalWrite(aTEN, 1);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 1);
+      digitalWrite(eTEN, 1);
+      digitalWrite(fTEN, 1);
+      digitalWrite(gTEN, 0);
+    }
+    
+    if (tens==1) {
+      digitalWrite(aTEN, 0);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 0);
+      digitalWrite(eTEN, 0);
+      digitalWrite(fTEN, 0);
+      digitalWrite(gTEN, 0);
+    }
+
+    if (tens==2) {
+      digitalWrite(aTEN, 1);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 0);
+      digitalWrite(dTEN, 1);
+      digitalWrite(eTEN, 1);
+      digitalWrite(fTEN, 0);
+      digitalWrite(gTEN, 1);
+    }
+
+    if (tens==3) {
+      digitalWrite(aTEN, 1);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 1);
+      digitalWrite(eTEN, 0);
+      digitalWrite(fTEN, 0);
+      digitalWrite(gTEN, 1);
+    }
+
+    if (tens==4) {
+      digitalWrite(aTEN, 0);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 0);
+      digitalWrite(eTEN, 0);
+      digitalWrite(fTEN, 1);
+      digitalWrite(gTEN, 1);
+    }
+
+    if (tens==5) {
+      digitalWrite(aTEN, 1);
+      digitalWrite(bTEN, 0);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 1);
+      digitalWrite(eTEN, 0);
+      digitalWrite(fTEN, 1);
+      digitalWrite(gTEN, 1);
+    }
+
+    if (tens==6) {
+      digitalWrite(aTEN, 0);
+      digitalWrite(bTEN, 0);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 1);
+      digitalWrite(eTEN, 1);
+      digitalWrite(fTEN, 1);
+      digitalWrite(gTEN, 1);
+    }
+
+    if (tens==7) {
+      digitalWrite(aTEN, 1);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 0);
+      digitalWrite(eTEN, 0);
+      digitalWrite(fTEN, 0);
+      digitalWrite(gTEN, 0);
+    }
+
+    if (tens==8) {
+      digitalWrite(aTEN, 1);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 1);
+      digitalWrite(eTEN, 1);
+      digitalWrite(fTEN, 1);
+      digitalWrite(gTEN, 1);
+    }
+
+    if (tens==9) {
+      digitalWrite(aTEN, 1);
+      digitalWrite(bTEN, 1);
+      digitalWrite(cTEN, 1);
+      digitalWrite(dTEN, 0);
+      digitalWrite(eTEN, 0);
+      digitalWrite(fTEN, 1);
+      digitalWrite(gTEN, 1);
+    }
+    }
+  }
+}
+
+
+void setup()
+{
+  lcd_setup();
+  components_defined();
+  Serial.begin(115200);
+  }
+
+void loop()
+{  
+  seven_segment_counting();
+}
+   
+  
+
